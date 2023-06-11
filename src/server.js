@@ -25,13 +25,8 @@ app.use(express.urlencoded({extended:false}))
 
 
 // Rutas
-app.get('/', (req, res)=>{
-    res.render('index')
-})
-
-app.get('/login',(req,res)=>{
-    res.render('login')
-})
+// Rutas 
+app.use(require('./routers/index.routers'))
 // Archivos estaticos
 app.use(express.static(path.join(__dirname, 'public')))
 
