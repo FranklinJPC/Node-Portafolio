@@ -1,8 +1,13 @@
 const express = require('express')
-const path = require('path')
 const {engine} = require('express-handlebars')
-const app = express()
+const methodOverride = require('method-override')
+const passport = require('passport');
+const session = require('express-session');
 
+// Inicializaciones 
+const path = require('path')
+const app = express()
+require('./config/passport')
 // Configuraciones
 // Variable que toma el puerto a la cual se desplega o la especificada (3003)
 app.set('port', process.env.port || 3003) 
@@ -20,13 +25,25 @@ app.set('view engine', '.hbs')
 // Apis: express.json()
 // Formularios: express.urlencode()
 app.use(express.urlencoded({extended:false}))
-
+app.use(methodOverride('_method'))
+app.use(session({ 
+    secret: 'secret',
+    resave:true,
+    saveUninitialized:true
+}));
+app.use(passport.initialize())
+app.use(passport.session())
 // Variables globales
-
+app.use((req,res,next)=>{
+    res.locals.user = req.user?.name || null
+    next()
+})
 
 // Rutas
 // Rutas 
-app.use(require('./routers/index.routers'))
+app.use(require('./routers/index.routes'))
+app.use(require('./routers/portafolio.routes'))
+app.use(require('./routers/users.routes'))
 // Archivos estaticos
 app.use(express.static(path.join(__dirname, 'public')))
 
