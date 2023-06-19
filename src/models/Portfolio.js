@@ -15,6 +15,10 @@ const portafolioSchema = new Schema(
             type: String,
             require: true
         },
+        image:{
+            public_id:String,
+            secure_url:String
+        },
         // Subdocumento
         // Se asocia un usuario
         // De cierta manera se trata de una relacion 1:n
