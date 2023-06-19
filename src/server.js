@@ -2,6 +2,7 @@ const express = require('express')
 const {engine} = require('express-handlebars')
 const methodOverride = require('method-override');
 const session = require('express-session');
+const fileUpload = require('express-fileupload')
 
 // Inicializaciones
 const path = require('path')
@@ -21,6 +22,11 @@ app.engine('.hbs', engine({
     extname:'.hbs' // Extesion de las plantillas
 }))
 app.set('view engine', '.hbs')
+// Configuracion de express-fileupload
+app.use(fileUpload({
+    useTempFiles : true,
+    tempFileDir : './uploads'
+}));
 
 //app.use(require('./routers/index.routes'))
 
@@ -40,9 +46,11 @@ app.use(passport.initialize())
 // Inicializa session
 app.use(passport.session())
 
+
 // Variables globales
 app.use((req,res,next)=>{
     res.locals.user = req.user?.name || null
+    // console.log("-------------->", res.locals.user)
     next()
 })
 

@@ -4,7 +4,9 @@ const Portfolio = require('../models/Portfolio')
 // Metodos del portafolio
 const renderAllPortafolios = async (req,res)=>{
     // A partir del modelo se utiliza el meotod find() y lean().
-    const portfolios = await Portfolio.find().lean()
+    // const portfolios = await Portfolio.find().lean()
+    // Traer unicamente los documentos que este relacionado al usuario logeado
+    const portfolios = await Portfolio.find({user:req.user._id}).lean()
     // Invoca la visa y pasa las variables al portalfolio
     res.render("portafolio/allPortfolios",{portfolios})
     // res.send('Listar todos los portafolios')
@@ -23,6 +25,8 @@ const createNewPortafolio = async (req,res)=>{
     const {title, category,description} = req.body
     // Creacion de una nueva instancia
     const newPortfolio = new Portfolio({title,category,description})
+    // Se asocia los subdocumentos al usuario logeado
+    newPortfolio.user = req.user._id // req.user._id -> forma parte de la sesion
     // Ejecuta el metodo save()
     await newPortfolio.save() // Parte del metodo overrride
     res.redirect('/portafolios') // Redirecciona la pagina para otra
@@ -38,6 +42,9 @@ const renderEditPortafolioForm = async (req,res)=>{
     // res.send('Formulario para editar un portafolio')
 }
 const updatePortafolio = async(req,res)=>{
+    // Validación de que unicamente el usuario logeado sea capaz de actualizar
+    const portfolio = await Portfolio.findById(req.params.id).lean()
+    if(portfolio.user.toString() !== req.user._id.toString()) return res.redirect('/portafolios')
     // Captura de datos del form
     const {title,category,description}= req.body
     // A partir del modelo se llama al meotod findByIdAndUpdate

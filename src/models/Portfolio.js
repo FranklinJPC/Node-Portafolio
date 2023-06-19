@@ -14,6 +14,13 @@ const portafolioSchema = new Schema(
         category:{
             type: String,
             require: true
+        },
+        // Subdocumento
+        // Se asocia un usuario
+        // De cierta manera se trata de una relacion 1:n
+        user:{
+            type:String,
+            required: true
         }
     },
     {
