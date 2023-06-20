@@ -60,23 +60,19 @@ const renderEditPortafolioForm = async (req,res)=>{
 const updatePortafolio = async(req,res)=>{
     // Validación de que unicamente el usuario logeado sea capaz de actualizar
     const portfolio = await Portfolio.findById(req.params.id).lean()
-    // if(portfolio.user.toString() !== req.user._id.toString()) return res.redirect('/portafolios')
-    // // Captura de datos del form
-    // const {title,category,description}= req.body
-    // // A partir del modelo se llama al meotod findByIdAndUpdate
-    // await Portfolio.findByIdAndUpdate(req.params.id,{title,category,description})
-    
-    //Valida la id del portafolio   
-    if(portfolio._id != req.params.id) return res.redirect('/portafolios')
-    
+    // if(portfolio.user.toString() !== req.user._id.toString()) return res.redirect('/portafolios') 
+    // Valida la id del portafolio   
+    // if(portfolio._id != req.params.id) return res.redirect('/portafolios')
     // Valida si existe una imagen nueva
+    // Si: se actualiza la imagen
     if(req.files?.image) {
-        // Valida se agrega algo vacio
+        // Valida que exista una imagen en el formulario
         if(!(req.files?.image)) return res.send("Se requiere una imagen")
-        // Sobreescribe la imagen
+        // Sobreescribe/elimina con la imagen nueva en cloudinary
         await deleteImage(portfolio.image.public_id)
+        // Carga la nueva imagen
         const imageUpload = await uploadImage(req.files.image.tempFilePath)
-        // Sobreescribe los datos del portafolio
+        // Sobreescribe los datos del portafolio en base de datos
         const data ={
             title:req.body.title || portfolio.name,
             category: req.body.category || portfolio.category,
@@ -88,11 +84,14 @@ const updatePortafolio = async(req,res)=>{
         }
         // Realiza la limpieza de temporales
         await fs.unlink(req.files.image.tempFilePath)
+        // Actualiza la informacion por medio del metodo findByIdAndUpdate
         await Portfolio.findByIdAndUpdate(req.params.id,data)
     }
+    // No: se actualiza la imagen
     else{
-        // Realiza la actualizacion 
+        // Captura de datos del form
         const {title,category,description}= req.body
+        // A partir del modelo se llama al meotod findByIdAndUpdate
         await Portfolio.findByIdAndUpdate(req.params.id,{title,category,description})
     }
     // Redirige a portafolios
@@ -102,6 +101,7 @@ const updatePortafolio = async(req,res)=>{
 const deletePortafolio = async (req,res)=>{
     // Usa el metodo delete a partir del modelo
     const portafolio = await Portfolio.findByIdAndDelete(req.params.id)
+    // Elimina la imagen en base a si id
     await deleteImage(portafolio.image.public_id)
     // Redirecciona
     res.redirect('/portafolios')
