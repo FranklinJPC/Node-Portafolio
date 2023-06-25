@@ -14,6 +14,14 @@ const portafolioSchema = new Schema(
         category:{
             type: String,
             require: true
+        },
+        image:{
+            public_id:String,
+            secure_url:String
+        },
+        user:{
+            type:String,
+            required: true
         }
     },
     {

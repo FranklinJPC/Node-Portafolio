@@ -1,5 +1,5 @@
 const {Router} = require('express')
-const { renderRegisterForm, registerNewUser, renderLoginForm, loginUser, logoutUser } = require('../controllers/users.controllers')
+const { renderRegisterForm, registerNewUser, renderLoginForm, loginUser, logoutUser, confirmEmail } = require('../controllers/users.controllers')
 const router = Router()
 
 // Define las rutas
@@ -13,6 +13,7 @@ router.post('/user/login',loginUser)
 
 
 router.post('/user/logout',logoutUser)
+router.get('/user/confirmar/:token',confirmEmail)
 
 // Exportacion por default
-module.exports =router
+module.exports = router

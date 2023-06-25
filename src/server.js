@@ -3,6 +3,7 @@ const {engine} = require('express-handlebars')
 const methodOverride = require('method-override')
 const passport = require('passport');
 const session = require('express-session');
+const fileUpload = require('express-fileupload')
 
 // Inicializaciones 
 const path = require('path')
@@ -20,6 +21,10 @@ app.engine('.hbs', engine({
 }))
 app.set('view engine', '.hbs')
 //app.use(require('./routers/index.routes'))
+app.use(fileUpload({
+    useTempFiles : true,
+    tempFileDir : './uploads'
+}));
 
 // Middleware
 // Apis: express.json()
