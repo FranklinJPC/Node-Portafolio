@@ -2,7 +2,7 @@ const express = require('express')
 const {engine} = require('express-handlebars')
 const methodOverride = require('method-override')
 const passport = require('passport');
-const session = require('express-session');
+const session = require('cookie-session');
 const fileUpload = require('express-fileupload')
 
 // Inicializaciones 
